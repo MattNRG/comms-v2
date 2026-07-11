@@ -9,6 +9,6 @@ Everything is threaded (Maybe a bit too much), making sure everything gets throu
 And finally, we no longer use json to save the IP's (Since the robots can connect at any time) and is replaced with a simple directory.
 
 
-If I’ve learned one thing, it’s that before you get anywhere in life, you gotta stop listening to yourself
+"If I’ve learned one thing, it’s that before you get anywhere in life, you gotta stop listening to yourself"
 
 That being said, the old code is rubbish and the newer is way more modular. (Hopefully)
