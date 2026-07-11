@@ -19,6 +19,8 @@ packets = {
 currentRobots = {}
 # Format, robotID: (IP, PORT), TIME, SOCKET
 # RobotID, TUPLE [0], TIME [1], SOCKET [2]
+def disconnectRobot(robotID):
+    pass
 
 def checkRobots():
     # Basically heartbeat monitor so robo can connect again
@@ -44,6 +46,7 @@ def handleClient(client, addr):
        #messageType = int(messageType)
         message = client.recv(1024).decode()
         print(f"{addr[0]}: {message}")
+
         if message == "end":
             connected = False
             break
