@@ -4,7 +4,18 @@ import threading
 import time
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('0.0.0.0', 9999))
+server.bind(('0.0.0.0', 9999))  # Listening on ethernet, wifi and loopback
+
+class Robot:
+    def __init__(self, robotid, addr, socket):
+        self.id = robotid
+        self.addr = addr
+        self.socket = socket
+        self.lastSeen = time.time()
+
+        self.position = (0,0)
+        self.rotation = 0
+        self.battery = 100
 
 # Packet handleres unfinished
 packets = {
@@ -55,15 +66,14 @@ def handleClient(client, addr):
             print(f"{addr[0]}: {message}")
 
             if message == "end":
-                disconnectRobot(1)
                 break
         except:
             break
 
-    client.close()
+    disconnectRobot(1)
 
 def startServer():
-    print(f"Server; {socket.gethostbyname(socket.gethostname())}")
+    print(f"Server created - IP: {socket.gethostbyname(socket.gethostname())}")
     server.listen()
     while True:
         client, addr = server.accept()
