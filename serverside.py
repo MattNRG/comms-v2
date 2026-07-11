@@ -19,7 +19,11 @@ packets = {
 currentRobots = {}
 # Format, robotID: (IP, PORT), TIME, SOCKET, ACTIVE
 # RobotID, TUPLE [0], TIME [1], SOCKET [2], ACTIVE [3]
+
+heartBeatTime = 10
+
 def disconnectRobot(robotID):
+    print(f"Robot{robotID}: {currentRobots[robotID][0][0]} disconnected")
     currentRobots[robotID][3] = False
     currentRobots[robotID][2].close()
     del currentRobots[robotID]
@@ -29,7 +33,7 @@ def checkRobots():
     # Basically heartbeat monitor so robo can connect again
     while True:
         for robotID in list(currentRobots):
-            if time.time() - currentRobots[robotID][1] > 10:
+            if time.time() - currentRobots[robotID][1] > heartBeatTime:
                 print(f'Removing {robotID} for inactivity')
                 disconnectRobot(robotID)
         time.sleep(1)
@@ -42,17 +46,20 @@ def connectRobot(client, addr, robotID):
 
 def handleClient(client, addr):
     print("Connected by: ", addr)
-    while currentRobots[3]:
-        #messageType = client.recv(1024).decode()
-       #messageType = int(messageType)
-        message = client.recv(1024).decode()
-        print(f"{addr[0]}: {message}")
 
-        if message == "end":
-            disconnectRobot()
+    while True:
+        try:
+            #messageType = client.recv(1024).decode()
+           #messageType = int(messageType)
+            message = client.recv(1024).decode()
+            print(f"{addr[0]}: {message}")
+
+            if message == "end":
+                disconnectRobot(1)
+                break
+        except:
             break
 
-    print(f"{addr[0]} disconnected")
     client.close()
 
 def startServer():
@@ -65,7 +72,6 @@ def startServer():
         thread.start()
         connectRobot(client, addr, 1)
         print(f"Currently {threading.active_count() - 2} connection threads active")
-
 
 threading.Thread(target=startServer, daemon=True).start()
 threading.Thread(target=checkRobots(), daemon=True).start()
