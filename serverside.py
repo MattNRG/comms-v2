@@ -8,16 +8,30 @@ server.bind(('0.0.0.0', 9999))  # Listening on ethernet, wifi and loopback
 
 # Super proud of this
 class Robot:
-    def __init__(self, robotid, addr, socket):
+    def __init__(self, robotid):
         self.id = robotid
-        self.addr = addr
-        self.socket = socket
+        self.addr = None
+        self.socket = None
         self.lastSeen = time.time()
-        self.active = True
+        self.connected = False
 
+        self.onMap = False
         self.position = (0,0)
         self.rotation = 0
         self.battery = 100
+
+    # Not implemented yet
+    def get(self):
+        return self.socket.recv(1024)
+
+    # Not implemented yet
+    def send(self, package):
+        self.socket.send(package)
+
+    def disconnect(self):
+        self.connected = False
+        self.socket.close()
+        print(f"Robot{self.id}: {self.addr[0]} disconnected")
 
 # Packet handleres unfinished
 packets = {
@@ -30,30 +44,32 @@ packets = {
 }
 
 currentRobots = {}
-# Format, robotID: (IP, PORT), TIME, SOCKET, ACTIVE
-# RobotID, TUPLE [0], TIME [1], SOCKET [2], ACTIVE [3]
+# Format, robotID: RobotClass
 
 heartBeatTime = 10
+checkHeartbeat = 3
+loadRobots = 10  # Starts from 0
 
-def disconnectRobot(robotClass):
-    print(f"Robot{robotClass.id}: {robotClass.addr[0]} disconnected")
-    # currentRobots[robotID][3] = False
-    robotClass.socket.close()
-    del currentRobots[robotClass.id]
+def addRobots():
+    for i in range(loadRobots):
+        robotID = str(i)
+        robotClass = Robot(robotID)
+        currentRobots[robotID] = robotClass
 
+    print(f'Loaded: {currentRobots}')
 
 def checkRobots():
     # Basically heartbeat monitor so robo can connect again
     while True:
-        print(currentRobots)
+        # print(currentRobots)
         for robotID in list(currentRobots):
-            print(f"Checking {robotID}")
+            # print(f"Checking {robotID}")
             robotClass = currentRobots[robotID]
 
-            if time.time() - robotClass.lastSeen > heartBeatTime:
-                print(f'Removing {robotClass.id} due to inactivity')
-                disconnectRobot(robotClass)
-        time.sleep(1)
+            if time.time() - robotClass.lastSeen > heartBeatTime and robotClass.connected:
+                print(f'Disconnecting {robotID} due to inactivity')
+                robotClass.disconnect()
+        time.sleep(checkHeartbeat)
 
 def connectRobot(client, addr, robotID):
     robotClass = Robot(robotID, addr, client)
@@ -76,8 +92,8 @@ def handleClient(robotid):
                 break
         except:
             break
-    if not robotClass.active: return
-    disconnectRobot(robotClass)
+    if not robotClass.connected: return
+    robotClass.disconnect()
 
 def startServer():
     print(f"Server created - IP: {socket.gethostbyname(socket.gethostname())}")
@@ -87,12 +103,17 @@ def startServer():
         print("New ROBOT connected")
 
         roboid = client.recv(1024).decode()
-        robotClass = connectRobot(client, addr, roboid)
 
-        thread = threading.Thread(target=handleClient, args=(roboid), daemon=True)
+        currentRobots[roboid].connected = True
+        currentRobots[roboid].addr = addr
+        currentRobots[roboid].socket = client
+
+        thread = threading.Thread(target=handleClient, args=roboid, daemon=True)
         thread.start()
         print(f"Currently {threading.active_count() - 2} connection threads active")
 
+
+addRobots()
 threading.Thread(target=startServer, daemon=True).start()
 threading.Thread(target=checkRobots(), daemon=True).start()
 input("Press enter to stop")

@@ -1,7 +1,7 @@
 import socket
 import time
 
-roboID = 12
+roboID = "5"
 
 print(f"Current IP: {socket.gethostbyname(socket.gethostname())}")
 
