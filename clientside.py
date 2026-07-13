@@ -1,9 +1,13 @@
 import socket
+import struct
 import time
 
 roboID = "0"
 
 print(f"Current IP: {socket.gethostbyname(socket.gethostname())}")
+
+def sendMessage(message):
+    return struct.pack(f'BB{len(message)}s', 6, len(message), message.encode())
 
 while True:
     try:
@@ -13,7 +17,7 @@ while True:
         client.send(roboID.encode())
         while True:
             message = input("What to send: ")
-            client.send(message.encode())
+            client.send(sendMessage(message))
             if message == "end":
                 print("Closing connection")
                 client.close()
