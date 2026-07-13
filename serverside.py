@@ -35,12 +35,11 @@ class Robot:
 
 # Packet handlers unfinished
 packets = {
-    #1: ('FORMAT', connectRobot),
-    #2: ('FORMAT', sendCommands),
-    #3: ('FORMAT', getInfo),
-    #4: ('FORMAT', setParams),
-    #5: ('FORMAT', heartbeat),
-    #6: ('FORMAT', stopAll),
+    #1: ('FORMAT', sendCommands), OUTGOING
+    #2: ('FORMAT', getInfo), INCOMING
+    #3: ('FORMAT', setParams), OUTGOING
+    #4: ('FORMAT', heartbeat), INCOMING
+    #5: ('FORMAT', stopAll), OUTGOING
 }
 
 currentRobots = {}
@@ -49,6 +48,10 @@ currentRobots = {}
 heartBeatTime = 10
 checkHeartbeat = 3
 loadRobots = 1  # Starts from 0
+
+def packetManager(packet):
+    packetType = packet[0]
+    pass
 
 
 def addRobots():
