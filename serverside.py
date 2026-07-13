@@ -2,7 +2,7 @@ import socket
 import struct
 import threading
 import time
-import notify as notify
+import notify as notify # Debug use only
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(('0.0.0.0', 9998))  # Listening on ethernet, Wi-Fi and loopback
