@@ -13,7 +13,7 @@ while True:
         client.send(roboID.encode())
         while True:
             message = input("What to send: ")
-            client.send(message).encode()
+            client.send(message.encode())
             if message == "end":
                 print("Closing connection")
                 client.close()
