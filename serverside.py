@@ -5,10 +5,9 @@ import time
 import notify as notify
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('0.0.0.0', 9999))  # Listening on ethernet, Wi-Fi and loopback
+server.bind(('0.0.0.0', 9998))  # Listening on ethernet, Wi-Fi and loopback
 
 
-# Super proud of this
 class Robot:
     def __init__(self, robotid):
         self.id = robotid
@@ -22,11 +21,9 @@ class Robot:
         self.rotation = 0
         self.battery = 100
 
-    # Not implemented yet
     def getMessage(self):
         return self.socket.recv(1024)
 
-    # Not implemented yet
     def sendMessage(self, package):
         self.socket.send(package)
 
@@ -51,7 +48,7 @@ currentRobots = {}
 
 heartBeatTime = 10
 checkHeartbeat = 3
-loadRobots = 10  # Starts from 0
+loadRobots = 1  # Starts from 0
 
 
 def addRobots():
@@ -60,7 +57,7 @@ def addRobots():
         robotClass = Robot(robotID)
         currentRobots[robotID] = robotClass
 
-    print(f'Loaded: {currentRobots}')
+    print('Robots loaded successfully')
 
 
 def checkRobots():
@@ -91,38 +88,47 @@ def handleClient(robotid):
             # messageType = client.recv(1024).decode()
             # messageType = int(messageType)
             message = robotClass.getMessage().decode()
-            print(f"{robotClass.addr[0]}: {message}")
+            print(f"Robot {robotClass.id}: {message}")
             robotClass.lastSeen = time.time()
 
-            if message == "end":
+            if message == "end" or message == "":
                 break
-        except Exception as e:
-            print(e)
+
+        except Exception as Error:
+            print(Error)
             break
 
     if not robotClass.connected:
         return
 
     robotClass.disconnect()
+    print("Ending thread")
+
+# Readding so we can safely connect robots (currently it can cause memory leakage)
+def connectRobot(client, addr, robotid):
+
+    if currentRobots[robotid].connected:
+        currentRobots[robotid].socket.close()
+
+    currentRobots[robotid].lastSeen = time.time()
+    currentRobots[robotid].connected = True
+    currentRobots[robotid].addr = addr
+    currentRobots[robotid].socket = client
+
 
 
 def startServer():
-    print(f"Server created - IP: {socket.gethostbyname(socket.gethostname())}")
+    print(f"IP: {socket.gethostbyname(socket.gethostname())}")
     server.listen()
     while True:
         client, addr = server.accept()
-        print("New ROBOT connected")
 
-        notify.message("New ROBOT connected", f'IP: {addr[0]}')
+        robotid = client.recv(1024).decode()
+        connectRobot(client, addr, robotid)
 
-        roboid = client.recv(1024).decode()
+        notify.message(f"ROBOT{robotid} connected", f'IP: {addr[0]}')
 
-        currentRobots[roboid].lastSeen = time.time()
-        currentRobots[roboid].connected = True
-        currentRobots[roboid].addr = addr
-        currentRobots[roboid].socket = client
-
-        thread = threading.Thread(target=handleClient, args=roboid, daemon=True)
+        thread = threading.Thread(target=handleClient, args=robotid, daemon=True)
         thread.start()
         print(f"Currently {threading.active_count() - 2} connection threads active")
 
