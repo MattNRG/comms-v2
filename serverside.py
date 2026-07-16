@@ -5,8 +5,11 @@ import time
 import notify as notify  # Debug use only
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('0.0.0.0', 9998))  # Listening on ethernet, Wi-Fi and loopback
+server.bind(('0.0.0.0', 9997))  # Listening on ethernet, Wi-Fi and loopback
 
+class Ball:
+    def __init__(self):
+        self.position = (0, 0)
 
 class Robot:
     def __init__(self, robotid):
@@ -21,6 +24,9 @@ class Robot:
         self.rotation = 0
         self.battery = 100
         self.gyroRotation = 0
+
+    def __repr__(self):
+        return f"Robot {self.id} {self.addr[0]}, battery: {self.battery}, gyro: {self.gyroRotation}, on field map: {self.position}"
 
     def getMessage(self):
         return self.socket.recv(1024)
@@ -39,7 +45,18 @@ heartBeatTime = 10
 checkHeartbeat = 3
 loadRobots = 1  # Starts from 0
 
-def packetManager(packet, robotClass):
+def packManager(packetType):
+    # 1 Send commands
+    # 2 Get info
+    # 3 Set params
+    # 4 Heartbeat
+    # 5 Stop all
+    # 6 Error?
+    # 7 Message
+    pass
+
+
+def unpackManager(packet, robotClass):
 
     # 1 Send commands
     # 2 Get info
@@ -48,6 +65,9 @@ def packetManager(packet, robotClass):
     # 5 Stop all
     # 6 Error?
     # 7 Message
+    print(packet)
+
+    # Needs a way to manage broken pipe
 
     packetType = packet[0]
     robotClass.lastSeen = time.time()
@@ -86,17 +106,18 @@ def checkRobots():
         time.sleep(checkHeartbeat)
 
 
-def handleClient(robotid):
+def handleRobot(robotid):
     robotClass = loadedRobots[robotid]
     print("Connected by: ", robotClass.addr[0])
     while True:
         try:
-            # messageType = client.recv(1024).decode()
-            # messageType = int(messageType)
-            message = robotClass.getMessage().decode()
-            print(f"Robot {robotClass.id}: {message}")
+            message = robotClass.getMessage() # Upgrade to unpackManager
 
-            if message == "end" or message == "":
+            unpackManager(message, robotClass)
+
+            print(f"OLD Robot {robotClass.id}: {message.decode()}")
+
+            if message == "end" or message == "":  # Needs fixing
                 break
 
         except Exception as Error:
@@ -132,12 +153,12 @@ def startServer():
 
         notify.message(f"ROBOT{robotid} connected", f'IP: {addr[0]}')
 
-        thread = threading.Thread(target=handleClient, args=robotid, daemon=True)
+        thread = threading.Thread(target=handleRobot, args=robotid, daemon=True)
         thread.start()
         print(f"Currently {threading.active_count() - 2} connection threads active")
 
 
 addRobots()
 threading.Thread(target=startServer, daemon=True).start()
-threading.Thread(target=checkRobots(), daemon=True).start()
-input("Press enter to stop")
+threading.Thread(target=checkRobots, daemon=True).start()
+input("ENTER TO CLOSE ALL THREADS")
