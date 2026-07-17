@@ -7,12 +7,12 @@ roboID = "0"
 print(f"Current IP: {socket.gethostbyname(socket.gethostname())}")
 
 def sendMessage(message):
-    return struct.pack(f'BB{len(message)}s', 6, len(message), message.encode())
+    return struct.pack(f'BB{len(message)}s', 7, len(message), message.encode())
 
 while True:
     try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(('127.0.0.1', 9998))
+        client.connect(('127.0.0.1', 9997))
         print("Connected")
         client.send(roboID.encode())
         while True:

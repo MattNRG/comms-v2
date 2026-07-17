@@ -14,7 +14,7 @@ class Ball:
 class Robot:
     def __init__(self, robotid):
         self.id = robotid
-        self.addr = None
+        self.addr = 0
         self.socket = None
         self.lastSeen = 0
         self.connected = False
@@ -45,18 +45,8 @@ heartBeatTime = 10
 checkHeartbeat = 3
 loadRobots = 1  # Starts from 0
 
-def packManager(packetType):
-    # 1 Send commands
-    # 2 Get info
-    # 3 Set params
-    # 4 Heartbeat
-    # 5 Stop all
-    # 6 Error?
-    # 7 Message
-    pass
 
-
-def unpackManager(packet, robotClass):
+def unpack(packet, robotClass):
 
     # 1 Send commands
     # 2 Get info
@@ -79,8 +69,7 @@ def unpackManager(packet, robotClass):
         case 4:
             pass
         case 7:
-            packetType, length, decoded = struct.unpack(f'BB{packet[1]}s', packet)
-            print(f'Robot{robotClass.id}: {decoded.decode()}')
+            print(f'Robot{robotClass.id}: {packet.decode()}')
             pass
 
 def addRobots():
@@ -113,9 +102,7 @@ def handleRobot(robotid):
         try:
             message = robotClass.getMessage() # Upgrade to unpackManager
 
-            unpackManager(message, robotClass)
-
-            print(f"OLD Robot {robotClass.id}: {message.decode()}")
+            unpack(message, robotClass)
 
             if message == "end" or message == "":  # Needs fixing
                 break
@@ -130,7 +117,6 @@ def handleRobot(robotid):
     robotClass.disconnect()
     print("Ending thread")
 
-# Readding so we can safely connect robots (currently it can cause memory leakage)
 def connectRobot(client, addr, robotid):
 
     if loadedRobots[robotid].connected:
