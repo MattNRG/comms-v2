@@ -4,7 +4,7 @@ import struct
 import threading
 import time
 import notify as notify  # Debug use only
-from vision import getData
+from vision import visionClient
 
 from colorama import Fore, Back
 colorama.init(autoreset=True)
@@ -48,7 +48,7 @@ class Robot:
 loadedRobots = {}
 heartBeatTime = 10
 checkHeartbeat = 3
-loadRobots = 1  # Starts from 0
+loadRobots = 12  # Starts from 0
 
 
 def unpack(packet, robotClass):
@@ -62,8 +62,6 @@ def unpack(packet, robotClass):
     # 7 Message
     #print(f'[DEBUG] Packet: {packet}')
 
-    # Needs a way to manage broken pipe
-
     packetType = packet[0]
     robotClass.lastSeen = time.time()
     match packetType:  # Can be expanded later
@@ -74,7 +72,7 @@ def unpack(packet, robotClass):
         case 4:
             robotClass.lastSeen = time.time()
         case 7:
-            print(f'[ROBOT{robotClass.id}] {packet.decode()}')
+            print(f'[ROBOT {robotClass.id}] {packet.decode()}')
             pass
 
 def addRobots():
@@ -128,6 +126,7 @@ def startServer():
         client, addr = server.accept()
 
         robotid = client.recv(1024).decode()
+        print(robotid)
 
         if loadedRobots[robotid].connected:
             loadedRobots[robotid].socket.close()
@@ -146,8 +145,9 @@ def startServer():
 
 
 addRobots()
-print(Back.GREEN + "      READY TO START      ")
+print(Back.GREEN + "        READY TO START        ")
 threading.Thread(target=startServer, daemon=True).start()
 threading.Thread(target=checkRobots, daemon=True).start()
-print(f"Server IP: {socket.gethostbyname(socket.gethostname())}")
+print(Fore.LIGHTRED_EX + f"Server IP: {socket.gethostbyname(socket.gethostname())}")
 input("ENTER TO CLOSE ALL THREADS")
+print(Back.RED + "       PROCESS FINISHED       ")
