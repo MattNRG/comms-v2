@@ -14,7 +14,7 @@ if any(
         '--python_out=.', '--pyi_out=.',
         *[str(path) for path in pathlib.Path().rglob('proto/*.proto')]
     ])
-
+print("[VISION] Proto files compiled.")
 from proto.ssl_vision_wrapper_pb2 import SSL_WrapperPacket
 
 def open_multicast_socket(ip: str, port: int) -> socket.socket:
@@ -44,5 +44,4 @@ def getData():
     return packet
 
 
-print("[VISION] Proto files compiled.")
 print("[VISION] Ready to receive.")
