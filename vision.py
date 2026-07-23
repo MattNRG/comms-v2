@@ -2,6 +2,7 @@ import os
 import socket
 import struct
 import pathlib
+from google.protobuf import text_format
 
 if any(
         not os.path.exists('proto/' + proto + '_pb2.py')
@@ -39,3 +40,10 @@ class visionClient:
         packet = SSL_WrapperPacket()
         packet.ParseFromString(data)
         return packet
+
+def getVisionTest():
+    with open("vision_test.txt", "r") as f:
+        text = f.read()
+
+    packet = SSL_WrapperPacket()
+    return text_format.Parse(text, packet)

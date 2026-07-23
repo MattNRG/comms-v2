@@ -1,0 +1,130 @@
+detection {
+  frame_number: 632403
+  t_capture: 1773335537.9725857
+  t_sent: 1773335537.9774356
+  camera_id: 0
+  balls {
+    confidence: 0.881157637
+    x: -5015.00146
+    y: -4126.08
+    pixel_x: 125.427139
+    pixel_y: 199.770599
+  }
+  balls {
+    confidence: 0.967871487
+    x: -5012.3208
+    y: -4123.64355
+    pixel_x: 125.724487
+    pixel_y: 200.09758
+  }
+  robots_yellow {
+    confidence: 0.651638687
+    robot_id: 7
+    x: -6125.79639
+    y: -4759.89209
+    orientation: -0.079608418
+    pixel_x: 35.4144783
+    pixel_y: 54.2869263
+    height: 150
+  }
+  robots_yellow {
+    confidence: 0.810749769
+    robot_id: 2
+    x: -4212.66797
+    y: -2957.70874
+    orientation: -1.24341631
+    pixel_x: 260.16922
+    pixel_y: 292.918274
+    height: 150
+  }
+  robots_yellow {
+    confidence: 0.751306117
+    robot_id: 1
+    x: -4812.69092
+    y: -2876.41699
+    orientation: -1.08311796
+    pixel_x: 270.261475
+    pixel_y: 218.391922
+    height: 150
+  }
+  robots_yellow {
+    confidence: 0.789945245
+    robot_id: 3
+    x: -4499.64209
+    y: -2277.16309
+    orientation: -1.97155344
+    pixel_x: 344.756622
+    pixel_y: 257.433807
+    height: 150
+  }
+  robots_yellow {
+    confidence: 0.847770691
+    robot_id: 6
+    x: -4449.63477
+    y: -2103.7312
+    orientation: -1.24722409
+    pixel_x: 366.301849
+    pixel_y: 263.683502
+    height: 150
+  }
+  robots_yellow {
+    confidence: 0.719908595
+    robot_id: 4
+    x: -5262.88379
+    y: -1584.0199
+    orientation: -1.12831557
+    pixel_x: 430.857178
+    pixel_y: 162.795532
+    height: 150
+  }
+  robots_yellow {
+    confidence: 0.976356387
+    robot_id: 5
+    x: -3488.78418
+    y: 750.615356
+    orientation: -1.51260698
+    pixel_x: 720.255859
+    pixel_y: 383.355438
+    height: 150
+  }
+  robots_blue {
+    confidence: 0.897784054
+    robot_id: 4
+    x: -4232.87158
+    y: -4744.44922
+    orientation: 1.73525894
+    pixel_x: 38.8185234
+    pixel_y: 290.413086
+    height: 138
+  }
+  robots_blue {
+    confidence: 0.900292
+    robot_id: 10
+    x: -284.194794
+    y: -2553.84692
+    orientation: -2.99477458
+    pixel_x: 310.748566
+    pixel_y: 779.895325
+    height: 138
+  }
+  robots_blue {
+    confidence: 0.833421171
+    robot_id: 9
+    x: 443.852783
+    y: -2501.93042
+    orientation: -2.78183579
+    pixel_x: 317.083496
+    pixel_y: 870.059814
+    height: 138
+  }
+  robots_blue {
+    confidence: 0.88115418
+    robot_id: 6
+    x: 369.536194
+    y: -2319.01
+    orientation: -2.74222589
+    pixel_x: 339.768921
+    pixel_y: 860.836243
+    height: 138
+  }
+}
